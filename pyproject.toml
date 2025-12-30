@@ -1,0 +1,22 @@
+[project]
+name = "soc-automation"
+version = "1.0.0"
+description = "Advanced SOC automation lab: IOC normalization, threat intel enrichment, caching, scoring, and case generation."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "httpx>=0.27.0",
+  "pydantic>=2.7.0",
+  "pyyaml>=6.0.1",
+  "rich>=13.7.1",
+  "typer>=0.12.3",
+  "python-dotenv>=1.0.1",
+]
+
+[project.scripts]
+soc-auto = "soc_automation.cli:app"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
