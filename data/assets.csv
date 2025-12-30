@@ -1,0 +1,7 @@
+host,owner,department,criticality,notes
+WS-ALICE-01,alice,Sales,medium,Laptop
+SRV-BACKUP-01,svc_backup,IT,critical,Backup infrastructure
+VPN-GW-01,netops,IT,high,Remote access gateway
+WS-CHARLIE-02,charlie,Engineering,medium,Developer workstation
+FIN-WS-09,dana,Finance,high,Finance workstation
+
