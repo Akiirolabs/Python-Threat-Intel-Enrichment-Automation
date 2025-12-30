@@ -1,0 +1,26 @@
+mode: "offline"  # "offline" uses mock intel. "online" calls OTX/VT when keys exist.
+input:
+  alerts_csv: "data/alerts.csv"
+  assets_csv: "data/assets.csv"
+  sightings_csv: "data/sightings.csv"
+output:
+  dir: "output"
+  enriched_csv: "enriched_alerts.csv"
+  cases_json: "cases.json"
+  case_report_md: "case_report.md"
+enrichment:
+  concurrency: 10
+  timeout_seconds: 12
+  cache_db: ".cache/intel_cache.sqlite"
+  cache_ttl_hours: 72
+  providers:
+    - name: "mock"
+      enabled: true
+    - name: "otx"
+      enabled: true
+    - name: "vt"
+      enabled: true
+logging:
+  level: "INFO"
+  file: "output/pipeline.log"
+

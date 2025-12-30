@@ -1,0 +1,24 @@
+weights:
+  intel_malicious: 40
+  intel_suspicious: 20
+  sightings_count: 10
+  asset_criticality: 20
+  event_severity: 10
+thresholds:
+  low: 0
+  medium: 35
+  high: 60
+  critical: 80
+asset_criticality_map:
+  low: 5
+  medium: 10
+  high: 15
+  critical: 20
+event_severity_map:
+  dns_tunnel: 10
+  beaconing: 8
+  brute_force: 6
+  malware_hash: 9
+  suspicious_login: 5
+  data_exfil: 10
+
