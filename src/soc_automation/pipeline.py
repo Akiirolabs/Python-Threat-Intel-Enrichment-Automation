@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
 import os
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
@@ -13,6 +14,7 @@ from soc_automation.intel import MockProvider, OTXProvider, VirusTotalProvider
 from soc_automation.storage import SQLiteCache
 from soc_automation.scoring import score_alert
 from soc_automation.casegen import build_cases, render_case_report_md
+from soc_automation.logging_setup import setup_logging
 
 console = Console()
 
@@ -99,6 +101,9 @@ async def enrich_ioc(
 
 async def run_pipeline(config_path: str) -> None:
     cfg = load_yaml(config_path)
+    setup_logging(cfg)
+    log = logging.getLogger("soc_automation.pipeline")
+    log.info("pipeline_start config=%s", config_path)
     scoring_cfg = load_yaml("config/scoring.yaml")
 
     os.makedirs(cfg["output"]["dir"], exist_ok=True)
@@ -123,6 +128,7 @@ async def run_pipeline(config_path: str) -> None:
         if vt.enabled():
             providers.append(vt)
 
+    log.info("mode=%s providers=%s", mode, [p.name for p in providers])
     console.print(f"[bold]Mode:[/bold] {mode} | Providers: {[p.name for p in providers]}")
 
     import asyncio
