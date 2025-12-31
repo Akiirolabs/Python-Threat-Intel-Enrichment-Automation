@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 import yaml
 from rich.console import Console
+from rich.progress import Progress
 from soc_automation.models import Alert, Asset, Sightings, EnrichedAlert, IntelVerdict, IndicatorType
 from soc_automation.normalize import normalize_alert_iocs
 from soc_automation.intel import MockProvider, OTXProvider, VirusTotalProvider
@@ -164,7 +165,16 @@ async def run_pipeline(config_path: str) -> None:
         ea = score_alert(ea, scoring_cfg)
         return ea
 
-    enriched = await asyncio.gather(*[enrich_one(a) for a in alerts])
+    with Progress() as progress:
+        task_id = progress.add_task("[cyan]Enriching alerts...", total=len(alerts))
+        enriched = []
+
+        async def wrapped(alert: Alert):
+            ea = await enrich_one(alert)
+            progress.advance(task_id, 1)
+            return ea
+
+        enriched = await asyncio.gather(*[wrapped(a) for a in alerts])
 
     out_dir = cfg["output"]["dir"]
     enriched_csv_path = os.path.join(out_dir, cfg["output"]["enriched_csv"])
