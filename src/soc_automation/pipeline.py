@@ -11,6 +11,7 @@ from rich.console import Console
 from soc_automation.models import Alert, Asset, Sightings, EnrichedAlert, IntelVerdict, IndicatorType
 from soc_automation.normalize import normalize_alert_iocs
 from soc_automation.intel import MockProvider, OTXProvider, VirusTotalProvider
+from soc_automation.intel.retry import retry_async
 from soc_automation.storage import SQLiteCache
 from soc_automation.scoring import score_alert
 from soc_automation.casegen import build_cases, render_case_report_md
@@ -81,7 +82,10 @@ async def enrich_ioc(
     verdicts: List[IntelVerdict] = []
     for p in providers:
         try:
-            v = await p.lookup(indicator_type, value)
+            async def _call():
+                return await p.lookup(indicator_type, value)
+
+            v = await retry_async(_call, attempts=3, base_delay=0.5, max_delay=4.0)
             if v:
                 verdicts.append(v)
         except Exception as e:
